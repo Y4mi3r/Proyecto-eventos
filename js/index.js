@@ -1,0 +1,130 @@
+// Hemos omitido los acentos en los comentarios por compatibilidad
+
+//Define las variables que necesites
+
+var eventos;
+var fechaActual;
+var evento = [];
+var proximos = [];
+
+$(document).ready(function () {
+
+  //Carga los datos que estan en el JSON (info.json) usando AJAX
+  
+  $.ajax({
+    url: "http://127.0.0.1:5500/info.json"
+  }).done(function (resultado) {
+
+
+  //Guarda el resultado en variables
+
+  eventos = resultado.eventos;
+  fechaActual = resultado.fechaActual
+
+  //Recorre por los datos del JSON y lo guarda en una array
+
+  for (var i = 0; i < eventos.length; i++) {
+    evento.push(eventos[i]);
+    
+  }
+  
+  //Clasifica los eventos segun la fecha actual del JSON
+
+  proximos = evento.filter(evento => evento.fecha > fechaActual);
+
+  //Ordena los eventos segun la fecha (los mas cercanos primero)
+
+  proximos = proximos.sort(function (x, y) {
+    if (x.fecha < y.fecha) {
+      return -1;
+    }
+    return 1;
+
+  })
+
+  //Extrae solo dos eventos
+  //Ordena los eventos segun la fecha (los mas cercanos primero)
+  //Crea un string que contenga el HTML que describe el detalle del evento
+  //Recorre el arreglo y concatena el HTML para cada evento
+
+  var html = ""
+
+  for (var j = 0; j < 2; j++) {
+    html += `
+            <div class="col p-3">
+              <div class="p-4 border rounded bg-light">
+                <a href="detalle.html?id=${proximos[j].id}">
+                <h2>${proximos[j].nombre}</h2></a>
+                <p><h6 style="color:gray">${proximos[j].fecha} - ${proximos[j].lugar}</h6>
+                <h6>${proximos[j].descripcion}</h6></p>
+              </div>
+            </div>
+            `
+  }
+
+  //Modifica el DOM agregando el html generado
+
+  document.getElementById("proximos").innerHTML = html
+
+    //Selecciona los eventos que sean anteriores a la fecha actual del JSON 
+
+    pasados = evento.filter(evento => evento.fecha < fechaActual);
+
+
+    //Ordena los eventos segun la fecha (los mas recientes primero)
+
+    pasados = pasados.sort(function (x, y) {
+      if (x.fecha > y.fecha) {
+        return -1;
+      }
+      return 1;
+
+    })
+
+    //Crea un string que contenga el HTML que describe el detalle del evento
+
+    //Recorre el arreglo y concatena el HTML para cada evento
+
+
+    var html = ""
+
+    for (var j = 0; j < 2; j++) {
+      html += `
+            <div class="col p-3">
+              <div class="p-4 border rounded bg-light">
+                <a href="detalle.html?id=${pasados[j].id}">
+                <h2>${pasados[j].nombre}</h2></a>
+                <p><h6 style="color:gray">${pasados[j].fecha} - ${pasados[j].lugar}</h6>
+                <h6>${pasados[j].descripcion}</h6></p>
+              </div>
+            </div>
+              `
+    }
+
+    //Modifica el DOM agregando el html generado
+    document.getElementById("pasados").innerHTML = html
+
+  })
+
+  
+
+  //Extrae solo dos eventos
+
+
+});
+
+/*
+
+<div class="container py-4">
+          <div class="row">
+            <div class="col-5">
+             <div class="p-4 border rounded bg-light">
+             <a href="detalle.html?id=${proximos[j].id}">
+             <h2>${proximos[j].nombre}</h2></a>
+              <p><h6 style="color:gray">${proximos[j].fecha} - ${proximos[j].lugar}</h6>
+              <h6>${proximos[j].descripcion}</h6></p>
+             </div>
+            </div>
+          </div>
+        </div>
+*/
